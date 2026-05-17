@@ -130,7 +130,7 @@ ${articlesContext ? `ARTICLES LÉGIFRANCE DISPONIBLES :\n${articlesContext}` : "
     });
 
     const claudeData = await claudeResponse.json();
-    const answer = claudeData.content?.[0]?.text || "Erreur lors de la génération de la réponse.";
+    console.log("Claude response:", JSON.stringify(claudeData)); const answer = claudeData.content?.[0]?.text || claudeData.error?.message || JSON.stringify(claudeData);
 
     res.json({ answer, articlesFound, source });
 
