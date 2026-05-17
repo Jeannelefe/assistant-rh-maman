@@ -101,7 +101,8 @@ async function send(text) {
     var data = await response.json();
     document.getElementById(typingId).remove();
 
-    var answer = data.answer || data.error || 'Erreur inconnue';
+    var answer = (data.answer || data.error || 'Erreur inconnue')   .replace(/### (.*)/g, '<strong style="font-size:15px;color:#daa520">$1</strong>')   .replace(/## (.*)/g, '<strong style="font-size:16px;color:#c8b870">$1</strong>')   .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')   .replace(/^---$/gm, '<hr style="border-color:#2a2838;margin:8px 0">')   .replace(/
+/g, '<br>');
     var sourceTag = data.articlesFound ? '<div class="source-tag">📄 ' + data.articlesFound + ' article(s) Légifrance consulté(s)</div>' : '';
 
     chat.innerHTML += '<div class="msg"><div class="avatar">⚖️</div><div><div class="bubble assistant">' + answer + '</div>' + sourceTag + '</div></div>';
