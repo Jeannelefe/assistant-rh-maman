@@ -8,13 +8,11 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static("public"));
 
-// =============================================
-// 🔑 COLLE TES CLÉS ICI
-// =============================================
 const PISTE_CLIENT_ID = process.env.PISTE_CLIENT_ID;
 const PISTE_CLIENT_SECRET = process.env.PISTE_CLIENT_SECRET;
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
-// =============================================
+
+const PISTE_AVAILABLE = PISTE_CLIENT_ID && PISTE_CLIENT_SECRET;
 
 // Obtenir un token PISTE
 async function getPisteToken() {
@@ -66,48 +64,55 @@ async function getArticle(articleId, token) {
   return data;
 }
 
-// Route principale - question RH
+// Route principale
 app.post("/api/question", async (req, res) => {
   const { question } = req.body;
   if (!question) return res.status(400).json({ error: "Question manquante" });
 
   try {
-    // 1. Obtenir le token PISTE
-    const token = await getPisteToken();
-
-    // 2. Rechercher les articles pertinents
-    const searchResults = await searchCodeTravail(question, token);
-
-    // 3. Construire le contexte avec les articles trouvés
     let articlesContext = "";
-    if (searchResults?.results?.length > 0) {
-      for (const result of searchResults.results.slice(0, 3)) {
-        if (result.id) {
-          const article = await getArticle(result.id, token);
-          if (article?.article) {
-            articlesContext += `\n[${article.article.num || result.id}] ${article.article.texte || result.titre}\n`;
+    let articlesFound = 0;
+    let source = "connaissance générale du Code du travail";
+
+    // Si PISTE est disponible, on interroge Légifrance
+    if (PISTE_AVAILABLE) {
+      try {
+        const token = await getPisteToken();
+        const searchResults = await searchCodeTravail(question, token);
+
+        if (searchResults?.results?.length > 0) {
+          articlesFound = searchResults.results.length;
+          for (const result of searchResults.results.slice(0, 3)) {
+            if (result.id) {
+              const article = await getArticle(result.id, token);
+              if (article?.article) {
+                articlesContext += `\n[${article.article.num || result.id}] ${article.article.texte || result.titre}\n`;
+              }
+            }
           }
+          source = "Légifrance (temps réel)";
         }
+      } catch (pisteError) {
+        console.error("Erreur PISTE:", pisteError.message);
+        // On continue sans PISTE
       }
     }
 
-    // 4. Appeler Claude avec les articles trouvés
     const systemPrompt = `Tu es un assistant juridique spécialisé en droit du travail français pour une direction d'entreprise de 100 salariés dans l'enseignement privé indépendant (CCN EPI, IDCC 2691).
 
-Tu réponds TOUJOURS du point de vue de l'employeur.
-Tu te bases UNIQUEMENT sur les articles du Code du travail fournis ci-dessous.
-Cite toujours l'article exact. Si les articles fournis ne suffisent pas, dis-le clairement.
+Tu réponds TOUJOURS du point de vue de l'employeur : obligations légales, procédures, risques juridiques, marges de manœuvre.
+Cite toujours les articles exacts du Code du travail.
+Langage clair et accessible, pas de jargon inutile.
 
 Structure ta réponse en 4 blocs :
 📋 LA RÈGLE → l'article applicable
-✅ CE QUE VOUS POUVEZ FAIRE → les options disponibles  
+✅ CE QUE VOUS POUVEZ FAIRE → les options disponibles
 ⏱️ LES DÉLAIS → les délais légaux à respecter
 ⚠️ LES RISQUES → les conséquences si procédure non respectée
 
-Termine par : "Pour toute décision engageant l'entreprise, consultez votre juriste."
+Termine par : "Pour toute décision engageant l'entreprise, consultez votre juriste ou avocat en droit du travail."
 
-ARTICLES DISPONIBLES :
-${articlesContext || "Aucun article trouvé pour cette requête. Indique-le à l'utilisateur et suggère de consulter legifrance.gouv.fr"}`;
+${articlesContext ? `ARTICLES LÉGIFRANCE DISPONIBLES :\n${articlesContext}` : "Réponds à partir de ta connaissance du Code du travail français en vigueur. Précise les articles exacts."}`;
 
     const claudeResponse = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
@@ -127,7 +132,7 @@ ${articlesContext || "Aucun article trouvé pour cette requête. Indique-le à l
     const claudeData = await claudeResponse.json();
     const answer = claudeData.content?.[0]?.text || "Erreur lors de la génération de la réponse.";
 
-    res.json({ answer, articlesFound: searchResults?.results?.length || 0 });
+    res.json({ answer, articlesFound, source });
 
   } catch (error) {
     console.error("Erreur:", error);
