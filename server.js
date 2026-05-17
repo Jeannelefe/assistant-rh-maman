@@ -12,7 +12,7 @@ const PISTE_CLIENT_ID = process.env.PISTE_CLIENT_ID;
 const PISTE_CLIENT_SECRET = process.env.PISTE_CLIENT_SECRET;
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 
-const PISTE_AVAILABLE = false; // Sandbox instable - désactivé temporairement
+const PISTE_AVAILABLE = PISTE_CLIENT_ID && PISTE_CLIENT_SECRET;
 
 // Obtenir un token PISTE
 async function getPisteToken() {
