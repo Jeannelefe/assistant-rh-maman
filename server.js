@@ -11,9 +11,9 @@ app.use(express.static("public"));
 // =============================================
 // 🔑 COLLE TES CLÉS ICI
 // =============================================
-const PISTE_CLIENT_ID = "COLLE_TON_CLIENT_ID_PISTE_ICI";
-const PISTE_CLIENT_SECRET = "COLLE_TON_CLIENT_SECRET_PISTE_ICI";
-const ANTHROPIC_API_KEY = "COLLE_TA_CLÉ_ANTHROPIC_ICI"; // commence par sk-ant-
+const PISTE_CLIENT_ID = process.env.PISTE_CLIENT_ID;
+const PISTE_CLIENT_SECRET = process.env.PISTE_CLIENT_SECRET;
+const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 // =============================================
 
 // Obtenir un token PISTE
