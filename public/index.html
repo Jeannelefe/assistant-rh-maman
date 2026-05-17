@@ -23,9 +23,14 @@
     .msg { display: flex; margin-bottom: 20px; }
     .msg.user { justify-content: flex-end; }
     .avatar { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, #b8860b, #daa520); display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; margin-right: 10px; margin-top: 4px; }
-    .bubble { max-width: 85%; padding: 14px 18px; font-size: 14px; line-height: 1.8; white-space: pre-wrap; }
-    .bubble.user { background: linear-gradient(135deg, #b8860b22, #daa52033); border: 1px solid #b8860b55; border-radius: 18px 18px 4px 18px; color: #e8d898; }
+    .bubble { max-width: 85%; padding: 14px 18px; font-size: 14px; line-height: 1.8; }
+    .bubble.user { background: linear-gradient(135deg, #b8860b22, #daa52033); border: 1px solid #b8860b55; border-radius: 18px 18px 4px 18px; color: #e8d898; white-space: pre-wrap; }
     .bubble.assistant { background: #14161f; border: 1px solid #252535; border-radius: 4px 18px 18px 18px; color: #d0c8b0; }
+    .bubble.assistant h3 { color: #daa520; font-size: 14px; margin: 12px 0 4px; }
+    .bubble.assistant h2 { color: #c8b870; font-size: 15px; margin: 12px 0 4px; }
+    .bubble.assistant hr { border: none; border-top: 1px solid #2a2838; margin: 10px 0; }
+    .bubble.assistant p { margin-bottom: 6px; }
+    .bubble.assistant strong { color: #e8d898; }
     .source-tag { font-size: 11px; color: #b8860b; font-family: monospace; margin-top: 6px; }
     .typing-dots { display: flex; gap: 5px; padding: 16px 20px; background: #14161f; border: 1px solid #252535; border-radius: 4px 18px 18px 18px; }
     .dot { width: 7px; height: 7px; border-radius: 50%; background: #b8860b; animation: pulse 1.2s ease-in-out infinite; }
@@ -56,37 +61,44 @@
     <h2>Posez votre question en droit du travail</h2>
     <p>Les réponses sont basées sur les articles du Code du travail<br>adaptés à votre convention collective EPI.</p>
     <div class="suggestions">
-      <button class="suggestion-btn" onclick="send('Un salarié est absent de façon répétée, que puis-je faire ?')">Un salarié est absent de façon répétée, que puis-je faire ?</button>
-      <button class="suggestion-btn" onclick="send('Quelles sont les étapes obligatoires avant un licenciement ?')">Quelles sont les étapes obligatoires avant un licenciement ?</button>
-      <button class="suggestion-btn" onclick="send('Comment fonctionne le congé parental et quel est le délai de prévenance ?')">Comment fonctionne le congé parental et quel est le délai de prévenance ?</button>
-      <button class="suggestion-btn" onclick="send('Quelles sont mes obligations concernant les heures supplémentaires ?')">Quelles sont mes obligations concernant les heures supplémentaires ?</button>
-      <button class="suggestion-btn" onclick="send('Puis-je licencier un salarié pendant un arrêt maladie ?')">Puis-je licencier un salarié pendant un arrêt maladie ?</button>
-      <button class="suggestion-btn" onclick="send('Comment proposer une rupture conventionnelle à un salarié ?')">Comment proposer une rupture conventionnelle à un salarié ?</button>
+      <button class="suggestion-btn" onclick="ask('Un salarié est absent de façon répétée, que puis-je faire ?')">Un salarié est absent de façon répétée, que puis-je faire ?</button>
+      <button class="suggestion-btn" onclick="ask('Quelles sont les étapes obligatoires avant un licenciement ?')">Quelles sont les étapes obligatoires avant un licenciement ?</button>
+      <button class="suggestion-btn" onclick="ask('Comment fonctionne le congé parental et quel est le délai de prévenance ?')">Comment fonctionne le congé parental et quel est le délai de prévenance ?</button>
+      <button class="suggestion-btn" onclick="ask('Quelles sont mes obligations concernant les heures supplémentaires ?')">Quelles sont mes obligations concernant les heures supplémentaires ?</button>
+      <button class="suggestion-btn" onclick="ask('Puis-je licencier un salarié pendant un arrêt maladie ?')">Puis-je licencier un salarié pendant un arrêt maladie ?</button>
+      <button class="suggestion-btn" onclick="ask('Comment proposer une rupture conventionnelle à un salarié ?')">Comment proposer une rupture conventionnelle à un salarié ?</button>
     </div>
   </div>
 </div>
 
 <div class="input-area">
   <div class="input-wrap">
-    <input type="text" id="input" placeholder="Posez votre question RH..." onkeydown="if(event.key==='Enter') send()" />
-    <button id="send" onclick="send()">↑</button>
+    <input type="text" id="input" placeholder="Posez votre question RH..." onkeydown="if(event.key==='Enter') ask()" />
+    <button id="send" onclick="ask()">↑</button>
   </div>
   <div class="footer-note">Pour toute décision importante, consultez un juriste ou légifrance.gouv.fr</div>
 </div>
 
 <script>
-async function send(text) {
+function renderMarkdown(text) {
+  return text
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/### (.*)/g, '<h3>$1</h3>')
+    .replace(/## (.*)/g, '<h2>$1</h2>')
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/^---$/gm, '<hr>')
+    .replace(/\n/g, '<br>');
+}
+
+async function ask(text) {
   var question = text || document.getElementById('input').value.trim();
   if (!question) return;
   document.getElementById('input').value = '';
   document.getElementById('welcome').style.display = 'none';
 
   var chat = document.getElementById('chat');
-
-  // Message utilisateur
   chat.innerHTML += '<div class="msg user"><div class="bubble user">' + question + '</div></div>';
 
-  // Animation
   var typingId = 'typing_' + Date.now();
   chat.innerHTML += '<div class="msg" id="' + typingId + '"><div class="avatar">⚖️</div><div class="typing-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>';
   chat.scrollTop = chat.scrollHeight;
@@ -101,7 +113,7 @@ async function send(text) {
     var data = await response.json();
     document.getElementById(typingId).remove();
 
-    var answer = data.answer || data.error || 'Erreur inconnue';
+    var answer = renderMarkdown(data.answer || data.error || 'Erreur inconnue');
     var sourceTag = data.articlesFound ? '<div class="source-tag">📄 ' + data.articlesFound + ' article(s) Légifrance consulté(s)</div>' : '';
 
     chat.innerHTML += '<div class="msg"><div class="avatar">⚖️</div><div><div class="bubble assistant">' + answer + '</div>' + sourceTag + '</div></div>';
