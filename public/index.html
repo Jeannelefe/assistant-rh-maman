@@ -6,229 +6,41 @@
   <title>Assistant RH - Code du Travail</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: Georgia, serif;
-      background: #0f1117;
-      color: #e8e0d0;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    header {
-      background: #0d0f18;
-      border-bottom: 1px solid #2a2a3a;
-      padding: 20px 32px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .logo {
-      width: 42px; height: 42px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #b8860b, #daa520);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 20px;
-    }
-
-    header h1 { font-size: 18px; color: #f0e6c8; font-weight: bold; }
+    body { font-family: Georgia, serif; background: #0f1117; color: #e8e0d0; min-height: 100vh; display: flex; flex-direction: column; }
+    header { background: #0d0f18; border-bottom: 1px solid #2a2a3a; padding: 20px 32px; display: flex; align-items: center; gap: 14px; }
+    .logo { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, #b8860b, #daa520); display: flex; align-items: center; justify-content: center; font-size: 20px; }
+    header h1 { font-size: 18px; color: #f0e6c8; }
     header p { font-size: 11px; color: #6a6050; margin-top: 2px; font-family: monospace; }
-
-    .badge {
-      margin-left: auto;
-      font-size: 11px;
-      color: #5a5040;
-      background: #1a1820;
-      border: 1px solid #2a2838;
-      border-radius: 6px;
-      padding: 5px 10px;
-      font-family: monospace;
-    }
-
-    .chat-area {
-      flex: 1;
-      overflow-y: auto;
-      padding: 32px 24px;
-      max-width: 760px;
-      width: 100%;
-      margin: 0 auto;
-    }
-
-    .welcome {
-      text-align: center;
-      padding: 40px 0;
-    }
-
+    .badge { margin-left: auto; font-size: 11px; color: #5a5040; background: #1a1820; border: 1px solid #2a2838; border-radius: 6px; padding: 5px 10px; font-family: monospace; }
+    #chat { flex: 1; overflow-y: auto; padding: 32px 24px; max-width: 760px; width: 100%; margin: 0 auto; }
+    .welcome { text-align: center; padding: 40px 0; }
     .welcome .icon { font-size: 48px; margin-bottom: 16px; }
     .welcome h2 { font-size: 20px; color: #c8b870; font-weight: normal; margin-bottom: 8px; }
     .welcome p { font-size: 13px; color: #6a6050; line-height: 1.7; }
-
-    .suggestions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 32px;
-    }
-
-    .suggestion-btn {
-      background: #14161f;
-      border: 1px solid #252535;
-      border-radius: 10px;
-      padding: 13px 15px;
-      color: #c0b090;
-      font-size: 13px;
-      cursor: pointer;
-      text-align: left;
-      line-height: 1.5;
-      font-family: Georgia, serif;
-      transition: all 0.15s;
-    }
-
-    .suggestion-btn:hover {
-      background: #1c1e2a;
-      border-color: #b8860b;
-      color: #e8d898;
-    }
-
-    .messages { display: flex; flex-direction: column; gap: 20px; }
-
-    .message { display: flex; align-items: flex-start; gap: 10px; }
-    .message.user { justify-content: flex-end; }
-
-    .avatar {
-      width: 30px; height: 30px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #b8860b, #daa520);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 13px; flex-shrink: 0;
-    }
-
-    .bubble {
-      max-width: 85%;
-      padding: 14px 18px;
-      font-size: 14px;
-      line-height: 1.8;
-      white-space: pre-wrap;
-    }
-
-    .bubble.user {
-      background: linear-gradient(135deg, #b8860b22, #daa52033);
-      border: 1px solid #b8860b55;
-      border-radius: 18px 18px 4px 18px;
-      color: #e8d898;
-    }
-
-    .bubble.assistant {
-      background: #14161f;
-      border: 1px solid #252535;
-      border-radius: 4px 18px 18px 18px;
-      color: #d0c8b0;
-    }
-
-    .articles-count {
-      font-size: 11px;
-      color: #b8860b;
-      font-family: monospace;
-      margin-top: 8px;
-    }
-
-    .typing {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-    }
-
-    .dots {
-      background: #14161f;
-      border: 1px solid #252535;
-      border-radius: 4px 18px 18px 18px;
-      padding: 16px 20px;
-      display: flex;
-      gap: 5px;
-      align-items: center;
-    }
-
-    .dot {
-      width: 7px; height: 7px;
-      border-radius: 50%;
-      background: #b8860b;
-      animation: pulse 1.2s ease-in-out infinite;
-    }
+    .suggestions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 32px; }
+    .suggestion-btn { background: #14161f; border: 1px solid #252535; border-radius: 10px; padding: 13px 15px; color: #c0b090; font-size: 13px; cursor: pointer; text-align: left; line-height: 1.5; font-family: Georgia, serif; }
+    .suggestion-btn:hover { background: #1c1e2a; border-color: #b8860b; color: #e8d898; }
+    .msg { display: flex; margin-bottom: 20px; }
+    .msg.user { justify-content: flex-end; }
+    .avatar { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, #b8860b, #daa520); display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; margin-right: 10px; margin-top: 4px; }
+    .bubble { max-width: 85%; padding: 14px 18px; font-size: 14px; line-height: 1.8; white-space: pre-wrap; }
+    .bubble.user { background: linear-gradient(135deg, #b8860b22, #daa52033); border: 1px solid #b8860b55; border-radius: 18px 18px 4px 18px; color: #e8d898; }
+    .bubble.assistant { background: #14161f; border: 1px solid #252535; border-radius: 4px 18px 18px 18px; color: #d0c8b0; }
+    .source-tag { font-size: 11px; color: #b8860b; font-family: monospace; margin-top: 6px; }
+    .typing-dots { display: flex; gap: 5px; padding: 16px 20px; background: #14161f; border: 1px solid #252535; border-radius: 4px 18px 18px 18px; }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: #b8860b; animation: pulse 1.2s ease-in-out infinite; }
     .dot:nth-child(2) { animation-delay: 0.2s; }
     .dot:nth-child(3) { animation-delay: 0.4s; }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 0.3; transform: scale(0.8); }
-      50% { opacity: 1; transform: scale(1); }
-    }
-
-    .input-area {
-      border-top: 1px solid #1e2030;
-      padding: 18px 24px;
-      background: #0d0f18;
-    }
-
-    .input-wrap {
-      max-width: 760px;
-      margin: 0 auto;
-      display: flex;
-      gap: 10px;
-      align-items: flex-end;
-    }
-
-    textarea {
-      flex: 1;
-      background: #14161f;
-      border: 1px solid #2a2838;
-      border-radius: 12px;
-      padding: 13px 16px;
-      color: #e8e0d0;
-      font-size: 14px;
-      font-family: Georgia, serif;
-      resize: none;
-      outline: none;
-      line-height: 1.6;
-      transition: border-color 0.15s;
-    }
-
-    textarea:focus { border-color: #b8860b; }
-
-    button#send {
-      width: 44px; height: 44px;
-      border-radius: 12px;
-      border: none;
-      cursor: pointer;
-      font-size: 18px;
-      transition: all 0.15s;
-      flex-shrink: 0;
-    }
-
-    button#send:enabled {
-      background: linear-gradient(135deg, #b8860b, #daa520);
-    }
-
-    button#send:disabled {
-      background: #1e2030;
-      cursor: not-allowed;
-    }
-
-    .footer-note {
-      max-width: 760px;
-      margin: 8px auto 0;
-      font-size: 11px;
-      color: #3a3828;
-      text-align: center;
-      font-family: monospace;
-    }
-
-    ::-webkit-scrollbar { width: 5px; }
-    ::-webkit-scrollbar-thumb { background: #2a2838; border-radius: 3px; }
+    @keyframes pulse { 0%,100%{opacity:.3;transform:scale(.8)} 50%{opacity:1;transform:scale(1)} }
+    .input-area { border-top: 1px solid #1e2030; padding: 18px 24px; background: #0d0f18; }
+    .input-wrap { max-width: 760px; margin: 0 auto; display: flex; gap: 10px; align-items: flex-end; }
+    #input { flex: 1; background: #14161f; border: 1px solid #2a2838; border-radius: 12px; padding: 13px 16px; color: #e8e0d0; font-size: 14px; font-family: Georgia, serif; outline: none; line-height: 1.6; }
+    #input:focus { border-color: #b8860b; }
+    #send { width: 44px; height: 44px; border-radius: 12px; border: none; background: linear-gradient(135deg, #b8860b, #daa520); cursor: pointer; font-size: 18px; color: white; flex-shrink: 0; }
+    .footer-note { max-width: 760px; margin: 8px auto 0; font-size: 11px; color: #3a3828; text-align: center; font-family: monospace; }
   </style>
 </head>
 <body>
-
 <header>
   <div class="logo">⚖️</div>
   <div>
@@ -238,125 +50,68 @@
   <div class="badge">INFORMATIF — pas un avis juridique</div>
 </header>
 
-<div class="chat-area" id="chatArea">
+<div id="chat">
   <div class="welcome" id="welcome">
     <div class="icon">📖</div>
     <h2>Posez votre question en droit du travail</h2>
-    <p>Les réponses sont basées sur les articles du Code du travail récupérés en temps réel<br>depuis Légifrance, adaptés à votre convention collective EPI.</p>
+    <p>Les réponses sont basées sur les articles du Code du travail<br>adaptés à votre convention collective EPI.</p>
     <div class="suggestions">
-      <button class="suggestion-btn" onclick="ask(this.innerText)">Un salarié est absent de façon répétée, que puis-je faire ?</button>
-      <button class="suggestion-btn" onclick="ask(this.innerText)">Quelles sont les étapes obligatoires avant un licenciement ?</button>
-      <button class="suggestion-btn" onclick="ask(this.innerText)">Comment fonctionne le congé parental et quel est le délai de prévenance ?</button>
-      <button class="suggestion-btn" onclick="ask(this.innerText)">Quelles sont mes obligations concernant les heures supplémentaires ?</button>
-      <button class="suggestion-btn" onclick="ask(this.innerText)">Puis-je licencier un salarié pendant un arrêt maladie ?</button>
-      <button class="suggestion-btn" onclick="ask(this.innerText)">Comment proposer une rupture conventionnelle à un salarié ?</button>
+      <button class="suggestion-btn" onclick="send('Un salarié est absent de façon répétée, que puis-je faire ?')">Un salarié est absent de façon répétée, que puis-je faire ?</button>
+      <button class="suggestion-btn" onclick="send('Quelles sont les étapes obligatoires avant un licenciement ?')">Quelles sont les étapes obligatoires avant un licenciement ?</button>
+      <button class="suggestion-btn" onclick="send('Comment fonctionne le congé parental et quel est le délai de prévenance ?')">Comment fonctionne le congé parental et quel est le délai de prévenance ?</button>
+      <button class="suggestion-btn" onclick="send('Quelles sont mes obligations concernant les heures supplémentaires ?')">Quelles sont mes obligations concernant les heures supplémentaires ?</button>
+      <button class="suggestion-btn" onclick="send('Puis-je licencier un salarié pendant un arrêt maladie ?')">Puis-je licencier un salarié pendant un arrêt maladie ?</button>
+      <button class="suggestion-btn" onclick="send('Comment proposer une rupture conventionnelle à un salarié ?')">Comment proposer une rupture conventionnelle à un salarié ?</button>
     </div>
   </div>
-  <div class="messages" id="messages"></div>
 </div>
 
 <div class="input-area">
   <div class="input-wrap">
-    <textarea id="input" rows="1" placeholder="Posez votre question RH..." onkeydown="handleKey(event)"></textarea>
-    <button id="send" onclick="ask()" disabled>↑</button>
+    <input type="text" id="input" placeholder="Posez votre question RH..." onkeydown="if(event.key==='Enter') send()" />
+    <button id="send" onclick="send()">↑</button>
   </div>
-  <div class="footer-note">Source : Légifrance API PISTE (temps réel) · Pour toute décision importante, consultez un juriste</div>
+  <div class="footer-note">Pour toute décision importante, consultez un juriste ou légifrance.gouv.fr</div>
 </div>
 
 <script>
-  const input = document.getElementById("input");
-  const sendBtn = document.getElementById("send");
-  const messages = document.getElementById("messages");
-  const welcome = document.getElementById("welcome");
+async function send(text) {
+  var question = text || document.getElementById('input').value.trim();
+  if (!question) return;
+  document.getElementById('input').value = '';
+  document.getElementById('welcome').style.display = 'none';
 
-  input.addEventListener("input", () => {
-    sendBtn.disabled = !input.value.trim();
-    input.style.height = "auto";
-    input.style.height = input.scrollHeight + "px";
-  });
+  var chat = document.getElementById('chat');
 
-  function handleKey(e) {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      ask();
-    }
+  // Message utilisateur
+  chat.innerHTML += '<div class="msg user"><div class="bubble user">' + question + '</div></div>';
+
+  // Animation
+  var typingId = 'typing_' + Date.now();
+  chat.innerHTML += '<div class="msg" id="' + typingId + '"><div class="avatar">⚖️</div><div class="typing-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>';
+  chat.scrollTop = chat.scrollHeight;
+
+  try {
+    var response = await fetch('/api/question', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question: question })
+    });
+
+    var data = await response.json();
+    document.getElementById(typingId).remove();
+
+    var answer = data.answer || data.error || 'Erreur inconnue';
+    var sourceTag = data.articlesFound ? '<div class="source-tag">📄 ' + data.articlesFound + ' article(s) Légifrance consulté(s)</div>' : '';
+
+    chat.innerHTML += '<div class="msg"><div class="avatar">⚖️</div><div><div class="bubble assistant">' + answer + '</div>' + sourceTag + '</div></div>';
+  } catch(e) {
+    document.getElementById(typingId).remove();
+    chat.innerHTML += '<div class="msg"><div class="avatar">⚖️</div><div class="bubble assistant">❌ Erreur : ' + e.message + '</div></div>';
   }
 
-  function addMessage(role, content, articlesCount) {
-    if (welcome.style.display !== "none") welcome.style.display = "none";
-
-    const wrap = document.createElement("div");
-    wrap.className = `message ${role}`;
-
-    if (role === "assistant") {
-      wrap.innerHTML = `
-        <div class="avatar">⚖️</div>
-        <div>
-          <div class="bubble assistant">${content}</div>
-          ${articlesCount !== undefined ? `<div class="articles-count">📄 ${articlesCount} article(s) Légifrance consulté(s)</div>` : ""}
-        </div>`;
-    } else {
-      wrap.innerHTML = `<div class="bubble user">${content}</div>`;
-    }
-
-    messages.appendChild(wrap);
-    wrap.scrollIntoView({ behavior: "smooth" });
-    return wrap;
-  }
-
-  function showTyping() {
-    if (welcome.style.display !== "none") welcome.style.display = "none";
-    const wrap = document.createElement("div");
-    wrap.className = "typing";
-    wrap.id = "typing";
-    wrap.innerHTML = `
-      <div class="avatar">⚖️</div>
-      <div class="dots">
-        <div class="dot"></div>
-        <div class="dot"></div>
-        <div class="dot"></div>
-      </div>`;
-    messages.appendChild(wrap);
-    wrap.scrollIntoView({ behavior: "smooth" });
-  }
-
-  function removeTyping() {
-    const t = document.getElementById("typing");
-    if (t) t.remove();
-  }
-
-  async function ask(text) {
-    const question = text || input.value.trim();
-    if (!question) return;
-
-    input.value = "";
-    input.style.height = "auto";
-    sendBtn.disabled = true;
-
-    addMessage("user", question);
-    showTyping();
-
-    try {
-      const response = await fetch("/api/question", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question })
-      });
-
-      const data = await response.json();
-      removeTyping();
-
-      if (data.error) {
-        addMessage("assistant", "❌ Erreur : " + data.error);
-      } else {
-        addMessage("assistant", data.answer, data.articlesFound);
-      }
-    } catch (e) {
-      removeTyping();
-      addMessage("assistant", "❌ Impossible de contacter le serveur. Vérifiez que l'application est démarrée.");
-    }
-  }
+  chat.scrollTop = chat.scrollHeight;
+}
 </script>
-
 </body>
 </html>
