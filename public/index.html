@@ -336,26 +336,28 @@
     addMessage("user", question);
     showTyping();
 
-    try {
-      const response = await fetch("/api/question", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question })
-      });
+   try {
+  const response = await fetch("/api/question", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ question })
+  });
 
-      const data = await response.json();
-      removeTyping();
+  const text = await response.text();
+  console.log("Réponse brute:", text);
+  const data = JSON.parse(text);
+  removeTyping();
 
-      if (data.error) {
-        addMessage("assistant", "❌ Erreur : " + data.error);
-      } else {
-        addMessage("assistant", data.answer, data.articlesFound);
-      }
-    } catch (e) {
-      removeTyping();
-      addMessage("assistant", "❌ Impossible de contacter le serveur. Vérifiez que l'application est démarrée.");
-    }
+  if (data.error) {
+    addMessage("assistant", "❌ Erreur : " + data.error);
+  } else {
+    addMessage("assistant", data.answer, data.articlesFound);
   }
+} catch (e) {
+  removeTyping();
+  console.error("Erreur:", e);
+  addMessage("assistant", "❌ Erreur : " + e.message);
+}
 </script>
 
 </body>
