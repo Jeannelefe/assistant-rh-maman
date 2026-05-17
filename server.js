@@ -123,7 +123,7 @@ ${articlesContext ? `ARTICLES LÉGIFRANCE DISPONIBLES :\n${articlesContext}` : "
       },
       body: JSON.stringify({
         model: "claude-sonnet-4-5",
-        max_tokens: 1000,
+        max_tokens: 3000,
         system: systemPrompt,
         messages: [{ role: "user", content: question }]
       })
